@@ -15,6 +15,18 @@ module ApplicationHelper
     content_tag(:a, name, html_options.merge(href: href, onclick: onclick))
   end
 
+  def classes_for_body
+    class_names = [logged_in? ? "logged-in" : "logged-out"]
+    class_names << "admin" if logged_in_as_admin?
+
+    if current_user.is_a?(User) && current_user.preference
+      class_names << "hide-warnings" if current_user.preference.hide_warnings?
+      class_names << "hide-freeform" if current_user.preference.hide_freeform?
+    end
+
+    class_names.join(" ")
+  end
+
   # Generates class names for the main div in the application layout
   def classes_for_main
     class_names = controller.controller_name + '-' + controller.action_name

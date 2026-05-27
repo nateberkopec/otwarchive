@@ -40,12 +40,17 @@
     <% if collection_item.item %>
       <% # An item can be in multiple collections. Including the collection name in the id prevents multiple items from having the same id. %>
       <% id = "blurb_#{collection_item.item_type}_#{collection_item.item_id}_#{collection_item.collection.name}" %>
-      <blockquote id="<%= id %>" class="<% if collection_item.item_type == 'Bookmark' %>bookmark <% else %>work <% end %> blurb toggled">
+      <% bookmark = collection_item.item if collection_item.item_type == 'Bookmark' %>
+      <% bookmarkable = bookmark.bookmarkable if bookmark %>
+      <% work_module_owner = if collection_item.item_type == 'Work'
+                               is_author_of?(collection_item.item)
+                             elsif bookmarkable.present?
+                               is_author_of?(bookmarkable)
+                             end %>
+      <blockquote id="<%= id %>" class="<% if collection_item.item_type == 'Bookmark' %>bookmark <% else %>work <% end %> blurb toggled<% if work_module_owner %> work-own<% end %>">
         <% if collection_item.item_type == 'Work' %>
-          <%= render "works/work_module", work: collection_item.item, is_unrevealed: false %>
+          <%= render "works/work_module_or_mystery", work: collection_item.item %>
         <% elsif collection_item.item_type == 'Bookmark' %>
-          <% bookmark = collection_item.item %>
-          <% bookmarkable = bookmark.bookmarkable %>
           <% if bookmarkable.blank? %>
             <p class="message"><%= ts("This has been deleted, sorry!") %></p>
           <% else %>

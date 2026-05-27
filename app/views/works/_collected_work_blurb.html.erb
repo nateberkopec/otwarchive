@@ -1,6 +1,10 @@
 <% # expects "work" %>
 <li id="work_<%= work.id %>" class="<% if is_author_of?(work) %>own <% end %><% if work.unrevealed? %>mystery <% end %>work <%= css_classes_for_creation_blurb(work) %>" role="article">
-  <%= render "works/work_module_or_mystery", work: work %>
+  <% if work.unrevealed? && !is_author_of?(work) && !User.current_user.is_a?(Admin) %>
+    <%= render "works/mystery_blurb", item: work %>
+  <% else %>
+    <%= render "works/work_module", work: work %>
+  <% end %>
   <% if is_author_of?(work) %>
     <h6 class="landmark heading"><%= ts("Author Actions") %></h6>
   	<ul class="actions" role="navigation">

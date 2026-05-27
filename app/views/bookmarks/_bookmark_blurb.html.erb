@@ -1,7 +1,7 @@
 <% # expects "bookmark" %>
 <% bookmarkable = bookmark.bookmarkable %>
 <% bookmark_form_id = (bookmarkable.blank? ? "#{bookmark.id}" : "#{bookmarkable.id}") %>
-<li id="bookmark_<%= bookmark.id %>" class="<%= css_classes_for_bookmark_blurb(bookmark) %>" role="article">
+<li id="bookmark_<%= bookmark.id %>" class="<%= css_classes_for_bookmark_blurb(bookmark) %><%= ' work-own' if bookmarkable.present? && is_author_of?(bookmarkable) %>" role="article">
 
   <% if bookmarkable.blank? %>
     <p class="message"><%= t(".deleted") %></p>

@@ -187,27 +187,37 @@ module TagsHelper
     sub_ul.html_safe
   end
 
-  def blurb_tag_block(item, tag_groups=nil)
+  def blurb_tag_block(item, tag_groups = nil, reveal_hidden_tags: false)
     tag_groups ||= item.tag_groups
     categories = ['ArchiveWarning', 'Relationship', 'Character', 'Freeform']
     tag_block = +""
 
     categories.each do |category|
-      if tags = tag_groups[category]
-        unless tags.empty?
-          class_name = tag_block_class_name(category)
-          if (class_name == "warnings" && hide_warnings?(item)) || (class_name == "freeforms" && hide_freeform?(item))
-            tag_block << show_hidden_tag_link_list_item(item, category)
-          elsif class_name == "warnings"
-            open_tags = "<li class='#{class_name}'><strong>"
-            close_tags = "</strong></li>"
-            link_array = tags.collect{|tag| link_to_tag_works(tag)}
-            tag_block <<  open_tags + link_array.join("</strong></li> <li class='#{class_name}'><strong>") + close_tags
-          else
-            link_array = tags.collect{|tag| link_to_tag_works(tag)}
-            tag_block << "<li class='#{class_name}'>" + link_array.join("</li> <li class='#{class_name}'>") + '</li>'
-          end
-        end
+      tags = tag_groups[category]
+      next if tags.blank?
+
+      class_name = tag_block_class_name(category)
+      hidden_tag_type = %w[warnings freeforms].include?(class_name)
+      css_reveal = reveal_hidden_tags && hidden_tag_type
+      hidden_by_preference = hidden_tag_type && !css_reveal &&
+                             ((class_name == "warnings" && hide_warnings?(item)) ||
+                              (class_name == "freeforms" && hide_freeform?(item)))
+
+      if hidden_by_preference
+        tag_block << show_hidden_tag_link_list_item(item, category)
+        next
+      end
+
+      tag_block << show_hidden_tag_link_list_item(item, category, css_reveal: true) if css_reveal
+
+      list_item_class = class_name
+      list_item_class += " tag-hidden-by-preference" if css_reveal
+      link_array = tags.collect { |tag| link_to_tag_works(tag) }
+
+      if class_name == "warnings"
+        tag_block << "<li class='#{list_item_class}'><strong>#{link_array.join("</strong></li> <li class='#{list_item_class}'><strong>")}</strong></li>"
+      else
+        tag_block << "<li class='#{list_item_class}'>#{link_array.join("</li> <li class='#{list_item_class}'>")}</li>"
       end
     end
     tag_block.html_safe
@@ -226,14 +236,18 @@ module TagsHelper
 
   # Wraps hidden tags toggle in <li> and <strong> tags for blurbs and work meta.
   # options[:suppress_toggle_class] is used to skip placing an HTML class on the
-  # toggle in work meta. The class will still be on the tags.
+  # toggle in work meta. options[:css_reveal] adds a hook for cached blurbs.
   def show_hidden_tag_link_list_item(item, category, options = {})
     item_class = item.class.to_s.underscore
     class_name = tag_block_class_name(category)
+    list_item_classes = []
+    list_item_classes << class_name unless options[:suppress_toggle_class]
+    list_item_classes << "show-hidden-tags" if options[:css_reveal]
+
     content_tag(:li,
-                content_tag(:strong, 
+                content_tag(:strong,
                             show_hidden_tags_link(item, class_name)),
-                class: options[:suppress_toggle_class] ? nil : class_name,
+                class: list_item_classes.any? ? list_item_classes.join(" ") : nil,
                 id: "#{item_class}_#{item.id}_category_#{class_name}")
   end
 

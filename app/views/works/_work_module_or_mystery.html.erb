@@ -1,0 +1,6 @@
+<%# expects "work" %>
+<% if work.unrevealed? && !is_author_of?(work) %>
+  <%= render "works/mystery_blurb", item: work %>
+<% else %>
+  <%= render "works/work_module", work: work %>
+<% end %>

@@ -267,6 +267,29 @@ eg collections, users, skins, instead of the 4-icon list
 
 /* various little mods */
 
+.blurb .work-status,
+.blurb .show-hidden-tags {
+  display: none;
+}
+
+.blurb.own .work-status,
+.blurb.work-own .work-status,
+body.admin .blurb .work-status {
+  display: inline;
+}
+
+body.hide-warnings .blurb:not(.own):not(.work-own) ul.tags:not(.show-warnings) li.warnings.tag-hidden-by-preference,
+body.hide-freeform .blurb:not(.own):not(.work-own) ul.tags:not(.show-freeforms) li.freeforms.tag-hidden-by-preference,
+body.hide-warnings .blurb ul.tags.show-warnings li.warnings.show-hidden-tags,
+body.hide-freeform .blurb ul.tags.show-freeforms li.freeforms.show-hidden-tags {
+  display: none;
+}
+
+body.hide-warnings .blurb:not(.own):not(.work-own) ul.tags:not(.show-warnings) li.warnings.show-hidden-tags,
+body.hide-freeform .blurb:not(.own):not(.work-own) ul.tags:not(.show-freeforms) li.freeforms.show-hidden-tags {
+  display: inline;
+}
+
 /* mod: ITEM
 blurbs on the manage collection items pages, mostly reseting styles inherited from interactions (forms)
 */

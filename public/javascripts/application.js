@@ -12,6 +12,7 @@ $j(document).ready(function() {
     setupAccordion();
     setupDropdown();
     updateCachedTokens();
+    setupHiddenTagToggles();
 
     // add clear to items on the splash page in older browsers
     $j('.splash').children('div:nth-of-type(odd)').addClass('odd');
@@ -231,6 +232,22 @@ function hideHideMe() {
 
 function showShowMe() {
     $j('.showme').each(function() { $j(this).show(); });
+}
+
+function setupHiddenTagToggles() {
+    $j('.blurb .show-hidden-tags a').click(function(event) {
+        var toggle = $j(this).closest('.show-hidden-tags');
+        var tagList = toggle.closest('ul.tags');
+
+        if (toggle.hasClass('warnings')) {
+            tagList.addClass('show-warnings');
+        } else if (toggle.hasClass('freeforms')) {
+            tagList.addClass('show-freeforms');
+        }
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+    });
 }
 
 function handlePopUps() {
