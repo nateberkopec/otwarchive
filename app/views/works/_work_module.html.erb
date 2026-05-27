@@ -41,7 +41,7 @@
     <h5 class="fandoms heading">
       <span class="landmark"><%= ts("Fandoms") %>:</span>
       <% fandoms = tag_groups['Fandom'] %>
-      <%= fandoms.collect{|tag| link_to_tag_works(tag) }.join(', ').html_safe if fandoms %> <%# herb:disable erb-no-unsafe-raw %>
+      <%= fandoms.collect{|tag| link_to_tag_works(tag) }.join(', ').html_safe if fandoms %>
       &nbsp;
     </h5>
 
@@ -68,7 +68,7 @@
   <% unless work.summary.blank? %>
     <h6 class="landmark heading"><%= ts("Summary") %></h6>
     <blockquote class="userstuff summary">
-      <%= raw strip_images(sanitize_field(work, :summary)) %> <%# herb:disable erb-no-unsafe-raw %>
+      <%= raw strip_images(sanitize_field(work, :summary)) %>
     </blockquote>
   <% end %>
 
